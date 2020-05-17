@@ -1,36 +1,21 @@
 // IValueReader.h
 
-#ifndef _IVALUEREADER_h
-#define _IVALUEREADER_h
+#ifndef _IVALUE_READER_h
+#define _IVALUE_READER_h
 
 #include <stdint.h>
 
 class IValueReader
 {
-private:
-	bool ValueReady = false;
-
 public:
-	virtual bool Prepare() { return false; }
-	virtual bool Acquire() { return false; }
-	virtual uint8_t GetDelay() const { return 0; };
-	virtual uint16_t GetId() { return 0; }
+	// Read value, return true when done.
+	// If false is returned, the delay until next Read() can be set.
+	virtual bool Read(uint32_t& delay) { return true; }
 
+	// Clear the stored value.
+	virtual void Clear() { }
 
-public:
-	IValueReader()
-	{
-		ValueReady = false;
-	}
-
-	bool HasValueReady()
-	{
-		return ValueReady;
-	}
-
-	void SetValueReady(const bool valueReady)
-	{
-		ValueReady = valueReady;
-	}
+	// Stop any pending operations and turn off used hardware.
+	virtual void Stop() { }
 };
 #endif
