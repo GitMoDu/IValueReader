@@ -8,30 +8,27 @@
 template<const bool PowerManagementEnabled = true,
 	const uint32_t SamplingDuration = AdcSamplingPeriodDefault,
 	const uint32_t SettleDuration = AdcSettlePeriodDefault,
-	const PrescalerEnum Prescaler = PrescalerDefault,
-	typename OutputType = int16_t>
+	const PrescalerEnum Prescaler = PrescalerDefault>
 	class TemplateAvrTemperatureReader :
-		public TemplateAvrAdcReader<0x08, PowerManagementEnabled, SamplingDuration, SettleDuration, Prescaler, OutputType>
+		public TemplateAvrAdcReader<0x08, PowerManagementEnabled, SamplingDuration, SettleDuration, Prescaler>
 {
 private:
-	// TODO: Get from setup/constructor/template value.
-	const float InternalReferenceVoltage = 363.0;
-	const int16_t IRef = InternalReferenceVoltage * (1024.0 / 1100.0);
+	static const int16_t InternalReferenceVoltage = 307;
 
 public:
-	TemplateAvrTemperatureReader() : TemplateAvrAdcReader<0x08, PowerManagementEnabled, SamplingDuration, SettleDuration, Prescaler, OutputType>()
+	TemplateAvrTemperatureReader() : TemplateAvrAdcReader<0x08, PowerManagementEnabled, SamplingDuration, SettleDuration, Prescaler>()
 	{
+	}
+
+	int16_t GetConverted(const int16_t reference = InternalReferenceVoltage)
+	{
+		return (int16_t)GetValue() - reference;
 	}
 
 protected:
 	virtual void SetReference()
 	{
 		FullScaleAvrAdc::SetReferenceInternal1100();
-	}
-
-	int16_t GetConverted(const uint16_t rawValue)
-	{
-		return (int16_t)rawValue - IRef;
 	}
 };
 #endif

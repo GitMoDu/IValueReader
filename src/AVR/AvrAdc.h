@@ -2,6 +2,7 @@
 // Static wrapper for AVR ADC functionality.
 // Made possible by Nick Gammon (www.gammon.com.au/adc).
 // TODO: Finish implementation for ATTiny85.
+// TODO: Validate channel count.
 
 #if !defined(_AVRADC_h) && defined(ARDUINO_ARCH_AVR)
 #define _AVRADC_h

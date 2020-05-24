@@ -11,32 +11,29 @@ template<const uint8_t Channel,
 	const bool PowerManagementEnabled = true,
 	const uint32_t SamplingDuration = AdcSamplingPeriodDefault,
 	const uint32_t SettleDuration = AdcSettlePeriodDefault,
-	const PrescalerEnum Prescaler = PrescalerDefault,
-	typename OutputType = uint32_t>
+	const PrescalerEnum Prescaler = PrescalerDefault>
 	class TemplateAvrVoltageReader :
-	public TemplateAvrAdcReader<Channel, PowerManagementEnabled, SamplingDuration, SettleDuration, Prescaler, OutputType >
+	public TemplateAvrAdcReader<Channel, PowerManagementEnabled, SamplingDuration, SettleDuration, Prescaler>
 {
 
 private:
-	// TODO: Get from setup/constructor/template value.
-	const int16_t CalibrationOffset = 0;
-	const float InternalReferenceVoltage = 5.0;
-
-	const uint32_t IRef = InternalReferenceVoltage * 1000;
+	static const int16_t CalibrationOffset = 0;
+	static const int32_t InternalReferenceVoltage = 5000;
 
 public:
-	TemplateAvrVoltageReader() : TemplateAvrAdcReader<Channel, PowerManagementEnabled, SamplingDuration, SettleDuration, Prescaler, OutputType>()
+	TemplateAvrVoltageReader() : TemplateAvrAdcReader<Channel, PowerManagementEnabled, SamplingDuration, SettleDuration, Prescaler>()
 	{}
+
+
+	int32_t GetConverted(const uint32_t reference = InternalReferenceVoltage, const int16_t offset = CalibrationOffset)
+	{		
+		return (int32_t)(((((GetValue() + offset) * reference) * RatioDivisor) / FullScaleAvrAdc::AdcMax)) / RatioMultiplier;
+	}
 
 protected:
 	virtual void SetReference()
 	{
 		FullScaleAvrAdc::SetReferenceAvcc();
-	}
-
-	uint32_t GetConverted(const uint16_t rawValue)
-	{
-		return (((rawValue * IRef) / FullScaleAvrAdc::AdcMax) * RatioDivisor) / RatioMultiplier;
 	}
 };
 #endif
