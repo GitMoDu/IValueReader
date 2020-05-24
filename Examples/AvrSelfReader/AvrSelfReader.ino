@@ -39,7 +39,7 @@ private:
 	bool DebuggedDuration = false;
 
 public:
-	TestTaskClass(Scheduler* scheduler, ValueReaderTaskClass* readerTask) 
+	TestTaskClass(Scheduler* scheduler, ValueReaderTaskClass* readerTask)
 		: Task(1000, TASK_FOREVER, scheduler, true)
 	{
 		ReaderTask = readerTask;
@@ -47,22 +47,24 @@ public:
 
 	bool Callback()
 	{
-		if (TemperatureReader.IsValid() && 
+		if (TemperatureReader.IsValid() &&
 			VccReader.IsValid() &&
 			Reader0.IsValid() &&
 			Reader1.IsValid() &&
 			!DebuggedDuration)
 		{
 			DebuggedDuration = true;
+#ifdef DEBUG_VALUE_READER
 			Serial.print(F("Actual duration: "));
-			Serial.print(ReaderTask->GetReadingDuration());
+			Serial.print(ReaderTask->ReadingDuration);
 			Serial.print(F(" ms for "));
-			Serial.print(ReaderTask->GetReaderCount());
+			Serial.print(ReaderTask->ReaderCount);
 			Serial.println(F(" value readers."));
+#endif
 
 			return;
 		}
-		else if(!TemperatureReader.IsValid())
+		else if (!TemperatureReader.IsValid())
 		{
 			Serial.println(F("TemperatureReader Not ready."));
 		}
@@ -70,29 +72,31 @@ public:
 		if (DebuggedDuration)
 		{
 			Serial.print(F("Temperature: "));
-			Serial.print(TemperatureReader.GetValue());
+			Serial.print(TemperatureReader.GetConverted(TemperatureReader.GetValue()));
 			Serial.println(F(" C"));
 
 			Serial.print(F("Vcc: "));
-			Serial.print(VccReader.GetValue());
+			Serial.print(VccReader.GetConverted(VccReader.GetValue()));
 			Serial.println(F(" mV"));
 
 			Serial.print(F("ADC0 value: "));
-			Serial.print(Reader0.GetValue());
+			
+			Serial.print(Reader0.GetConverted(Reader0.GetValue()));
 			Serial.println(F(" mV"));
 
 			Serial.print(F("ADC1 value: "));
-			Serial.print(Reader1.GetValue());
+			Serial.print(Reader1.GetConverted(Reader1.GetValue()));
 			Serial.println(F(" mV"));
 		}
 
 		return true;
 	}
-}TestTask(&SchedulerBase, &ReadersTask);
+} TestTask(&SchedulerBase, &ReadersTask);
 
 void setup()
 {
 	Serial.begin(SERIAL_BAUD_RATE);
+
 
 	TemperatureReader.ResetFilter(350); // Set the starting filter value closer to real value.
 
