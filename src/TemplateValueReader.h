@@ -5,29 +5,23 @@
 
 #include <IValueReader.h>
 
-template <typename OutputType,
-	typename ValueType = uint16_t>
-	class TemplateValueReader : public virtual IValueReader
+template <typename ValueType = uint16_t>
+class TemplateValueReader : public virtual IValueReader
 {
 private:
-	OutputType Value;
+	ValueType Value;
 
 	bool ValidValue = false;
 
 protected:
 	void SetValue(const ValueType value)
 	{
-		Value = GetConverted(GetProcessed(value));
+		Value = GetProcessed(value);
 	}
 
 	void SetValid(const bool valueGood)
 	{
 		ValidValue = valueGood;
-	}
-
-	virtual OutputType GetConverted(const ValueType value)
-	{
-		return value;
 	}
 
 	virtual ValueType GetProcessed(const ValueType value)
@@ -40,7 +34,7 @@ public:
 	{
 	}
 
-	OutputType GetValue()
+	ValueType GetValue()
 	{
 		return Value;
 	}

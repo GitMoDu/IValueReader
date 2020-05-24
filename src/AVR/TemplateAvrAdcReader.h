@@ -16,9 +16,8 @@ template<const uint8_t Channel,
 	const bool PowerManagementEnabled = true,
 	const uint32_t SamplingDuration = AdcSamplingPeriodDefault,
 	const uint32_t SettleDuration = AdcSettlePeriodDefault,
-	const PrescalerEnum Prescaler = PrescalerDefault,
-	typename OutputType = uint16_t>
-	class TemplateAvrAdcReader : public TemplateValueReader<OutputType, uint16_t>
+	const PrescalerEnum Prescaler = PrescalerDefault>
+	class TemplateAvrAdcReader : public TemplateValueReader<uint16_t>
 {
 private:
 	enum StateEnum : uint8_t
@@ -33,11 +32,10 @@ private:
 	static const uint32_t CheckPeriodMillis = 1;
 
 public:
-	TemplateAvrAdcReader() : TemplateValueReader<OutputType, uint16_t>()
+	TemplateAvrAdcReader() : TemplateValueReader<uint16_t>()
 	{
 		SetupPin();
 	}
-
 
 	// Read value, return true when done.
 	// If false is returned, the next delay can be set.
@@ -79,13 +77,6 @@ public:
 		default:
 			return false;
 		}
-	}
-
-	// Cancel any pending operations and turn off used hardware.
-	virtual void Cancel()
-	{
-		FullScaleAvrAdc::AdcOff();
-		PowerOff();
 	}
 
 	void Prepare()

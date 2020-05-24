@@ -65,6 +65,4 @@ public:
 		: AbstractLowPassReader<TemplateValueReader, LowPassFilter32<FilterFactor>, uint32_t>()
 	{}
 };
-
-
 #endif
