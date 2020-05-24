@@ -6,6 +6,7 @@
 //#define DEBUG_VALUE_READER
 
 #define _TASK_OO_CALLBACKS
+#define _TASK_SLEEP_ON_IDLE_RUN
 #include <TaskSchedulerDeclarations.h>
 
 
@@ -13,7 +14,7 @@
 #include <IReaderTask.h>
 
 
-const uint32_t ReaderTaskDefaultPeriodMillis = 1000;
+static const uint32_t ReaderTaskDefaultPeriodMillis = 1000;
 
 template<const uint32_t TargetPeriodMillis = ReaderTaskDefaultPeriodMillis,
 	const uint8_t MaxReadersCount = 10>
@@ -26,9 +27,7 @@ protected:
 		Disabled,
 		Reading,
 		Restarting,
-	};
-
-	ReaderStateEnum ReaderState = ReaderStateEnum::Disabled;
+	} ReaderState = ReaderStateEnum::Disabled;
 
 private:
 	static const uint32_t BackOffDurationMillis = 1;
@@ -39,10 +38,10 @@ private:
 	uint32_t ReadingStartMillis = 0;
 	uint8_t ReaderIndex = 0;
 
-	uint32_t ReadingDurationMillis = TargetPeriodMillis;
 
 #ifdef DEBUG_VALUE_READER
 public:
+	uint32_t ReadingDurationMillis = TargetPeriodMillis;
 	const uint8_t MaxSteps = 10; //Sanity check for locked IReaders.
 	uint8_t ReaderSteps = 0;
 	uint32_t ReadCount = 0;
@@ -161,13 +160,13 @@ public:
 
 #ifdef DEBUG_VALUE_READER
 					ReadCount++;
+					ReadingDurationMillis = Now - ReadingStartMillis;
 #endif
 					uint32_t Now = millis();
 
-					ReadingDurationMillis = Now - ReadingStartMillis;
 
 					// Round up the period to the last reading duration, if it exceeds the target period.
-					uint32_t NextTargetMillis = ReadingStartMillis + max(TargetPeriodMillis, ReadingDurationMillis);
+					uint32_t NextTargetMillis = ReadingStartMillis + max(TargetPeriodMillis, Now - ReadingStartMillis);
 
 					if (Now >= NextTargetMillis)
 					{
@@ -188,19 +187,6 @@ public:
 
 		return true;
 	}
-
-	uint32_t GetReadingDuration()
-	{
-		return ReadingDurationMillis;
-	}
-
-#ifdef DEBUG_VALUE_READER
-	uint32_t GetReadCount()
-	{
-		return ReadCount;
-	}
-#endif
-
 
 private:
 	void ResetReader()
