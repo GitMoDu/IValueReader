@@ -5,6 +5,34 @@
 
 #include <IValueReader.h>
 
+
+class TemplateReader : public virtual IValueReader
+{
+private:
+	bool ValidValue = false;
+
+protected:
+	void SetValid(const bool valueGood)
+	{
+		ValidValue = valueGood;
+	}
+
+public:
+	TemplateReader() : IValueReader()
+	{
+	}
+
+	bool IsValid()
+	{
+		return ValidValue;
+	}
+
+	virtual void Clear()
+	{
+		ValidValue = false;
+	}
+};
+
 template <typename ValueType = uint16_t>
 class TemplateValueReader : public virtual IValueReader
 {
@@ -49,4 +77,5 @@ public:
 		ValidValue = false;
 	}
 };
+
 #endif
