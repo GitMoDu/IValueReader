@@ -169,7 +169,7 @@ public:
 		sleep_disable();
 	}
 
-	static void StartSample(const bool sleepModeAdc = true)
+	static void StartSample()
 	{
 		ADCSRA |= bit(ADSC);
 	}
