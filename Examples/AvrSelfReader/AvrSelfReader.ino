@@ -14,7 +14,7 @@
 
 //#define DEBUG_VALUE_READER
 
-#include <TemplateReaderTask.h>
+#include <ValueReaderTask.h>
 #include <ValueReadersAVR.h>
 #include <ReaderLowPass.h>
 
