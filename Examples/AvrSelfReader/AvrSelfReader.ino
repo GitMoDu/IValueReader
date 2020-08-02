@@ -1,7 +1,8 @@
 /*
-    Name:       AvrSelfReader.ino
-    Example showing AVR internal temperature and supply voltage, 
+	Name:       AvrSelfReader.ino
+	Example showing AVR internal temperature and supply voltage,
 	and 2 generic voltage readers.
+	Depends on AvrADC wrapper : https://github.com/GitMoDu/AVR-ADC-Wrapper
 */
 
 #define SERIAL_BAUD_RATE 115200
@@ -22,10 +23,10 @@
 Scheduler SchedulerBase;
 ///
 
-TemplateLowPassReader16<TemplateAvrTemperatureReader<>, 3>  TemperatureReader;
+TemplateLowPassReader16<TemplateAvrTemperatureReader<>, 2>  TemperatureReader;
 TemplateAvrVccReader<> VccReader;
-TemplateAvrVoltageReader<0,1,1> Reader0; // Simple reader.
-TemplateAvrVoltageReader<0,3,10> Reader1; // Higher voltage measure.
+TemplateAvrVoltageReader<0, 1, 1> Reader0; // Simple reader.
+TemplateAvrVoltageReader<1, 3, 5> Reader1; // Higher voltage measure.
 
 #define ValueReaderTaskClass TemplateReaderTask<100, 4>
 
@@ -50,10 +51,8 @@ public:
 		if (TemperatureReader.IsValid() &&
 			VccReader.IsValid() &&
 			Reader0.IsValid() &&
-			Reader1.IsValid() &&
-			!DebuggedDuration)
+			Reader1.IsValid())
 		{
-			DebuggedDuration = true;
 #ifdef DEBUG_VALUE_READER
 			Serial.print(F("Actual duration: "));
 			Serial.print(ReaderTask->ReadingDuration);
@@ -62,32 +61,29 @@ public:
 			Serial.println(F(" value readers."));
 #endif
 
-			return;
-		}
-		else if (!TemperatureReader.IsValid())
-		{
-			Serial.println(F("TemperatureReader Not ready."));
-		}
-
-		if (DebuggedDuration)
-		{
 			Serial.print(F("Temperature: "));
-			Serial.print(TemperatureReader.GetConverted(TemperatureReader.GetValue()));
+			Serial.print(TemperatureReader.GetConverted(325));
 			Serial.println(F(" C"));
 
 			Serial.print(F("Vcc: "));
-			Serial.print(VccReader.GetConverted(VccReader.GetValue()));
+			Serial.print(VccReader.GetConverted());
 			Serial.println(F(" mV"));
 
 			Serial.print(F("ADC0 value: "));
-			
-			Serial.print(Reader0.GetConverted(Reader0.GetValue()));
+			Serial.print(Reader0.GetConverted());
 			Serial.println(F(" mV"));
 
 			Serial.print(F("ADC1 value: "));
-			Serial.print(Reader1.GetConverted(Reader1.GetValue()));
+			Serial.print(Reader1.GetConverted());
 			Serial.println(F(" mV"));
+
+			return;
 		}
+		else
+		{
+			Serial.println(F("Values Not ready."));
+		}
+
 
 		return true;
 	}
