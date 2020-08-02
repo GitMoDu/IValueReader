@@ -5,7 +5,9 @@
 
 #include <Arduino.h>
 #include <avr/power.h>
-#include "AvrAdc.h"
+
+// https://github.com/GitMoDu/AVR-ADC-Wrapper
+#include <AvrAdc.h>
 
 #include "..\IValueReader.h"
 #include "..\TemplateValueReader.h"
