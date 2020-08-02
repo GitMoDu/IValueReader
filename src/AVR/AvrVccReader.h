@@ -23,7 +23,7 @@ public:
 
 	int32_t GetConverted(const int32_t reference = InternalReferenceVoltage, const uint16_t offset = CalibrationOffset)
 	{
-		return (reference / (GetValue() + offset)) + 1;
+		return ((reference * AdcRange)/ (GetValue() + offset));
 	}
 
 protected:
