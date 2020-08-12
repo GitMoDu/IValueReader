@@ -16,6 +16,7 @@ Value Reader Task:
 
 
 Included Value readers:
+  - Depends on https://github.com/GitMoDu/AVR-ADC-Wrapper
   - AVR Generic ADC
   - AVR VCC.
   - AVR Temperature.
