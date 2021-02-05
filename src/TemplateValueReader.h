@@ -22,7 +22,7 @@ public:
 	{
 	}
 
-	bool IsValid()
+	const bool IsValid()
 	{
 		return ValidValue;
 	}
@@ -52,7 +52,7 @@ protected:
 		ValidValue = valueGood;
 	}
 
-	virtual ValueType GetProcessed(const ValueType value)
+	virtual const ValueType GetProcessed(const ValueType value)
 	{
 		return value;
 	}
@@ -62,12 +62,12 @@ public:
 	{
 	}
 
-	ValueType GetValue()
+	const ValueType GetValue()
 	{
 		return Value;
 	}
 
-	bool IsValid()
+	const bool IsValid()
 	{
 		return ValidValue;
 	}

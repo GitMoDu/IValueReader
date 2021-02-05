@@ -10,7 +10,7 @@ class IValueReader
 public:
 	// Read value, return true when done.
 	// If false is returned, the delay until next Read() can be set.
-	virtual bool Read(uint32_t& delay) { return true; }
+	virtual const bool Read(uint32_t& delay) { return true; }
 
 	// Clear the stored value.
 	virtual void Clear() { }

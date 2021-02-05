@@ -26,7 +26,7 @@ public:
 	}
 
 protected:
-	virtual ValueType GetProcessed(const ValueType value)
+	virtual const ValueType GetProcessed(const ValueType value)
 	{
 		Filter.Set(value);
 		Filter.Step();
