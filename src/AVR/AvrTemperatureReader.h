@@ -10,19 +10,27 @@ template<const bool PowerManagementEnabled = true,
 	const uint32_t SettleDuration = AdcSettlePeriodDefault,
 	const PrescalerEnum Prescaler = PrescalerDefault>
 	class TemplateAvrTemperatureReader :
-		public TemplateAvrAdcReader<0x08, PowerManagementEnabled, SamplingDuration, SettleDuration, Prescaler>
+	public TemplateAvrAdcReader<0x08, PowerManagementEnabled, SamplingDuration, SettleDuration, Prescaler>
 {
 private:
-	static const int16_t InternalReferenceVoltage = 307;
+	static const uint16_t InternalReferenceVoltage = 307;
+	static const uint16_t ZeroDegreesKelvin = 27315; // -273.15
 
 public:
 	TemplateAvrTemperatureReader() : TemplateAvrAdcReader<0x08, PowerManagementEnabled, SamplingDuration, SettleDuration, Prescaler>()
 	{
 	}
 
-	int16_t GetConverted(const int16_t reference = InternalReferenceVoltage)
+	// TODO: Review
+	int16_t GetCentiDegree(const uint16_t reference = InternalReferenceVoltage)
 	{
-		return (int16_t)GetValue() - reference;
+		return (int16_t)(GetValue() - reference);
+	}
+
+	// TODO: Review
+	uint16_t GetCentiKelvin(const uint16_t reference = InternalReferenceVoltage)
+	{
+		return (uint16_t)((int32_t)(GetValue() - reference) + ZeroDegreesKelvin);
 	}
 
 protected:

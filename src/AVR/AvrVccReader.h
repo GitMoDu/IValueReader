@@ -15,22 +15,29 @@ template<const bool PowerManagementEnabled = true,
 
 private:
 	static const int16_t CalibrationOffset = 1;
-	static const int32_t InternalReferenceVoltage = 1100;
+	static const uint16_t InternalReferenceVoltage = 1100;
 
 public:
 	TemplateAvrVccReader() : TemplateAvrAdcReader<0x0E, PowerManagementEnabled, SamplingDuration, SettleDuration, Prescaler>()
 	{}
 
-	int32_t GetConverted(const int32_t reference = InternalReferenceVoltage, const uint16_t offset = CalibrationOffset)
+	uint16_t GetMilliVolt(const uint16_t reference = InternalReferenceVoltage, const int16_t offset = CalibrationOffset)
 	{
 		return ((reference * AdcRange)/ (GetValue() + offset));
 	}
 
 protected:
+#ifdef ATTINY_CORE
+	virtual void SetReference()
+	{
+		// TODO:
+	}
+#else
 	virtual void SetReference()
 	{
 		FullScaleAvrAdc::SetReferenceAvcc();
 	}
+#endif
 };
 #endif
 

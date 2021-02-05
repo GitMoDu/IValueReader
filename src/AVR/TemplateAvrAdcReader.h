@@ -14,7 +14,7 @@
 
 
 
-template<const uint8_t Channel,
+template<const uint8_t ADCChannel,
 	const bool PowerManagementEnabled = true,
 	const uint32_t SamplingDuration = AdcSamplingPeriodDefault,
 	const uint32_t SettleDuration = AdcSettlePeriodDefault,
@@ -41,7 +41,7 @@ public:
 
 	// Read value, return true when done.
 	// If false is returned, the next delay can be set.
-	virtual bool Read(uint32_t& delay)
+	virtual const bool Read(uint32_t& delay)
 	{
 		switch (State)
 		{
@@ -88,8 +88,7 @@ public:
 		SetReference();
 		FullScaleAvrAdc::SetPrescaler(Prescaler);
 		FullScaleAvrAdc::SetScale();
-		FullScaleAvrAdc::SetChannel(Channel);
-
+		FullScaleAvrAdc::SetChannel(ADCChannel);
 	}
 
 protected:
@@ -98,8 +97,7 @@ protected:
 		FullScaleAvrAdc::SetReferenceAvcc();
 	}
 
-private:
-	void PowerOn()
+	virtual void PowerOn()
 	{
 		if (PowerManagementEnabled)
 		{
@@ -107,7 +105,7 @@ private:
 		}
 	}
 
-	void PowerOff()
+	virtual void PowerOff()
 	{
 		if (PowerManagementEnabled)
 		{
@@ -118,9 +116,9 @@ private:
 protected:
 	void SetupPin()
 	{
-		if (Channel <= 0x05)
+		if (ADCChannel <= 0x05)
 		{
-			pinMode(A0 + Channel, INPUT);
+			pinMode(A0 + ADCChannel, INPUT);
 		}		
 	}
 };

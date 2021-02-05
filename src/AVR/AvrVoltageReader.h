@@ -6,8 +6,8 @@
 #include "TemplateAvrAdcReader.h"
 
 template<const uint8_t Channel,
-	const uint16_t RatioMultiplier,
-	const uint16_t RatioDivisor,
+	const uint8_t RatioMultiplier,
+	const uint8_t RatioDivisor,
 	const bool PowerManagementEnabled = true,
 	const uint32_t SamplingDuration = AdcSamplingPeriodDefault,
 	const uint32_t SettleDuration = AdcSettlePeriodDefault,
@@ -17,23 +17,17 @@ template<const uint8_t Channel,
 {
 
 private:
+	static const uint16_t InternalReferenceVoltage = 5000;
 	static const int16_t CalibrationOffset = 0;
-	static const int32_t InternalReferenceVoltage = 5000;
 
 public:
 	TemplateAvrVoltageReader() : TemplateAvrAdcReader<Channel, PowerManagementEnabled, SamplingDuration, SettleDuration, Prescaler>()
 	{}
 
-
-	int32_t GetConverted(const uint32_t reference = InternalReferenceVoltage, const int16_t offset = CalibrationOffset)
+	// TODO: Review
+	const uint16_t GetMilliVolt(const uint16_t reference = InternalReferenceVoltage, const int16_t offset = CalibrationOffset)
 	{		
-		return (int32_t)(((((GetValue() + offset) * reference) * RatioDivisor) / FullScaleAvrAdc::AdcMax)) / RatioMultiplier;
-	}
-
-protected:
-	virtual void SetReference()
-	{
-		FullScaleAvrAdc::SetReferenceAvcc();
+		return (((((uint32_t)(GetValue() + offset) * reference) * RatioMultiplier) / FullScaleAvrAdc::AdcMax)) / RatioDivisor;
 	}
 };
 #endif
